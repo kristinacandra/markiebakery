@@ -1,13 +1,5 @@
 import React, {useRef} from 'react';
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  TouchableWithoutFeedback,
-  Animated,
-} from 'react-native';
+import { ScrollView, StyleSheet, Text, View, Image, TouchableWithoutFeedback, Animated,} from 'react-native';
 import {SearchNormal1} from 'iconsax-react-native';
 import {fontType, colors} from '../../theme';
 import {useNavigation} from '@react-navigation/native';

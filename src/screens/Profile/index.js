@@ -1,5 +1,13 @@
-import React from 'react';
-import {ScrollView, StyleSheet, Text, View, Image,TouchableOpacity} from 'react-native';
+import React, {useState, useEffect, useCallback} from 'react';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 import {
   Receipt1,
   DiscountShape,
@@ -8,12 +16,17 @@ import {
   Notification,
   Star,
   Additem,
+  Receipt21,
+  Clock,
+  Message,
 } from 'iconsax-react-native';
 import {fontType, colors} from '../../theme';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useFocusEffect} from '@react-navigation/native';
+import FastImage from 'react-native-fast-image';
+
+import axios from 'axios';
 
 export default function Profile() {
-  const navigation = useNavigation();
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -26,6 +39,34 @@ export default function Profile() {
 
 const ListBlog = () => {
   const navigation = useNavigation();
+  const [loading, setLoading] = useState(true);
+  const [blogData, setBlogData] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const getDataBlog = async () => {
+    try {
+      const response = await axios.get(
+        'https://657f25d29d10ccb465d60ecb.mockapi.io/markiebakery/blog',
+      );
+      setBlogData(response.data);
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      getDataBlog();
+      setRefreshing(false);
+    }, 1500);
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      getDataBlog();
+    }, []),
+  );
   return (
     <ScrollView>
       <View style={styles.container}>
@@ -82,7 +123,7 @@ const ListBlog = () => {
               <Text
                 style={[styles.teks, {color: 'black'}, {paddingBottom: 10}]}>
                 {' '}
-                Paymen Method
+                Payment Method
               </Text>
             </View>
             <View style={[styles.Line, {height: 1, opacity: 0.2}]}></View>
@@ -116,9 +157,49 @@ const ListBlog = () => {
               </Text>
             </TouchableOpacity>
           </View>
+          <View style={{paddingVertical: 10, gap: 10}}>
+            {loading ? (
+              <ActivityIndicator size={'large'} color={colors.blue()} />
+            ) : (
+              blogData.map((item, index) => (
+                <ItemSmall item={item} key={index} />
+              ))
+            )}
+          </View>
         </View>
       </View>
     </ScrollView>
+  );
+};
+
+const ItemSmall = ({item}) => {
+  const navigation = useNavigation();
+  return (
+    <TouchableOpacity
+      style={styles.cardItem}
+      onPress={() => navigation.navigate('EditBlog', {blogId: item.id})}>
+      <FastImage
+        style={styles.cardImage}
+        source={{
+          uri: item?.image,
+          headers: {Authorization: 'someAuthToken'},
+          priority: FastImage.priority.high,
+        }}
+        resizeMode={FastImage.resizeMode.cover}
+      />
+      <View style={styles.cardContent}>
+        <View
+          style={{
+            flexDirection: 'row',
+            gap: 30,
+          }}>
+          <View style={{gap: 5, flex: 1}}>
+            <Text style={styles.cardCategory}>{item.category?.name}</Text>
+            <Text style={styles.cardTitle}>{item?.title}</Text>
+          </View>
+        </View>
+      </View>
+    </TouchableOpacity>
   );
 };
 
@@ -126,6 +207,50 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#EEE0C9',
+  },
+  listCard: {
+    paddingHorizontal: 24,
+    paddingVertical: 10,
+    gap: 15,
+  },
+  cardItem: {
+    backgroundColor: colors.blue(0.03),
+    flexDirection: 'row',
+    borderRadius: 10,
+  },
+  cardCategory: {
+    color: colors.blue(),
+    fontSize: 10,
+    fontFamily: fontType['Pjs-SemiBold'],
+  },
+  cardTitle: {
+    fontSize: 20,
+    fontFamily: fontType['Pjs-Bold'],
+    color: colors.black(),
+  },
+  cardText: {
+    fontSize: 10,
+    fontFamily: fontType['Pjs-Medium'],
+    color: colors.grey(0.6),
+  },
+  cardImage: {
+    width: 94,
+    height: 94,
+    borderRadius: 10,
+    resizeMode: 'cover',
+  },
+  cardInfo: {
+    flexDirection: 'row',
+    gap: 5,
+    alignItems: 'center',
+  },
+  cardContent: {
+    gap: 10,
+    justifyContent: 'space-between',
+    paddingRight: 10,
+    paddingLeft: 15,
+    flex: 1,
+    paddingVertical: 10,
   },
   header: {
     paddingHorizontal: 24,
