@@ -26,9 +26,13 @@ export default function Discover() {
   });
   return (
     <View style={styles.container}>
-      <Animated.View style={[styles.header, {transform:[{translateY:headerY}]}]}>
-        <TouchableWithoutFeedback>
-          <SearchNormal1 color={colors.black()} variant="Linear" size={25} />
+      <Animated.View
+        style={[styles.header, {transform: [{translateY: headerY}]}]}>
+        <SearchNormal1 color={colors.black()} variant="Linear" size={25} style={{marginLeft:10,bottom:2,}} />
+        <TouchableWithoutFeedback
+          onPress={() => navigation.navigate('SearchPage')}>
+          <View style={styles.searchbox}></View>
+          {/* <View style={styles.searchbox}></View> */}
         </TouchableWithoutFeedback>
       </Animated.View>
       <View style={styles.container2}>
@@ -36,6 +40,7 @@ export default function Discover() {
           <Text style={styles.title2}>Markie Bakery</Text>
         </View>
       </View>
+
       {/* <ScrollView horizontal showsHorizontalScrollIndicator={false}> */}
       <Animated.ScrollView
         showsVerticalScrollIndicator={false}
@@ -182,17 +187,18 @@ const styles = StyleSheet.create({
   searchbox: {
     height: 40,
     width: 300,
-    backgroundColor: 'red',
+    backgroundColor: 'grey',
     margin: 3,
+    opacity: 0.1,
     borderRadius: 20,
+    marginLeft: 15,
     borderColor: 'black',
   },
   category1: {
     backgroundColor: '#EEE0C9',
     height: 210,
     width: 180,
-    alignSelf:'center',
-
+    alignSelf: 'center',
   },
   image: {
     width: 80,
