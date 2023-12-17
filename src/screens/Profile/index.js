@@ -1,29 +1,17 @@
 import React from 'react';
-import {ScrollView, StyleSheet,  TouchableOpacity, Text, SearchNormal, View, Image, ImageBackground, TextInput, Button} from 'react-native';
-import {SearchNormal1, ProfileCircle, Home, Bag, Receipt1, DiscountShape, Wallet, Save2, Notification, Star} from 'iconsax-react-native';
+import {ScrollView, StyleSheet,  Text, View, Image} from 'react-native';
+import {Receipt1, DiscountShape, Wallet, Save2, Notification, Star} from 'iconsax-react-native';
 import { fontType, colors } from '../../theme';
+import {useNavigation} from '@react-navigation/native';
 
 export default function Profile() {
+  const navigation = useNavigation()
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>PROFILE</Text>
       </View>
       <ListBlog />
-      <View style={styles.footer}>
-          <TouchableOpacity style={styles.searchButton}>
-            <Home color={colors.black()} variant="Bold" size={28} />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.searchButton}>
-            <SearchNormal1 color={colors.black()} variant="Linear" size={28} />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.searchButton}>
-            <Bag color={colors.black()} variant="Bold" size={28} />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.searchButton}>
-            <ProfileCircle color={colors.black()} variant="Bold" size={28} />
-          </TouchableOpacity>
-      </View>
     </View>
   );
 }
@@ -111,18 +99,6 @@ const styles = StyleSheet.create({
     elevation: 0,
     paddingTop:8,
     paddingBottom:4,
-  },
-  footer: {
-    paddingHorizontal: 24,
-    justifyContent: 'space-between',
-    flexDirection: 'row',
-    alignItems: 'center',
-    height:48,
-    elevation: 0,
-    paddingTop:4,
-    paddingBottom:8,
-    borderRadius: 0,
-    backgroundColor: '#F1F0E8',
   },
   title: {
     fontSize: 25,

@@ -1,10 +1,13 @@
 import React, {useState} from 'react';
-import {ScrollView, StyleSheet,  TouchableOpacity, Text, SearchNormal, View, Image, ImageBackground, TextInput, Button} from 'react-native';
-import {Notification, SearchNormal1, ProfileCircle, Home2, Bag} from 'iconsax-react-native';
+import {ScrollView, StyleSheet,  TouchableOpacity, Text, View, Image, ImageBackground} from 'react-native';
+import {Notification} from 'iconsax-react-native';
 import {BlogHeader,listCategory1, listCategory2} from '../../../data';
 import { fontType, colors } from '../../theme';
+import {useNavigation} from '@react-navigation/native';
+
 
 export default function Home() {
+  const navigation = useNavigation()
   return (
     <View style={{flex: 1, backgroundColor: '#EEE0C9',}}>
       <View style={styles.header}>
@@ -24,20 +27,6 @@ export default function Home() {
         <Text style={styles.title2}>Recommended Menu</Text>
       </View>
       <BlogCategory2 blogItems={listCategory2} />
-      <View style={styles.footer}>
-        <TouchableOpacity style={styles.searchButton}>
-          <Home2 color={colors.black()} variant="Bold" size={28} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.searchButton}>
-          <SearchNormal1 color={colors.black()} variant="Linear" size={28} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.searchButton}>
-          <Bag color={colors.black()} variant="Bold" size={28} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.searchButton}>
-          <ProfileCircle color={colors.black()} variant="Bold" size={28} />
-        </TouchableOpacity>
-      </View>
     </View>
   );
 }
@@ -176,18 +165,6 @@ const styles = StyleSheet.create({
     gap: 15,
   },
   searchButton: {},
-  footer: {
-    paddingHorizontal: 24,
-    justifyContent: 'space-between',
-    flexDirection: 'row',
-    alignItems: 'center',
-    height:48,
-    elevation: 0,
-    paddingTop:4,
-    paddingBottom:8,
-    borderRadius: 0,
-    backgroundColor: '#F1F0E8',
-  },
   header2: {
     paddingHorizontal: 24,
     justifyContent: 'space-between',

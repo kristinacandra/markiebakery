@@ -1,39 +1,28 @@
 import React from 'react';
-import {ScrollView, StyleSheet,  TouchableOpacity, Text, SearchNormal, View, Image} from 'react-native';
-import {SearchNormal1, ProfileCircle, Home, Bag} from 'iconsax-react-native';
+import {ScrollView, StyleSheet,  Text, View, Image, TouchableWithoutFeedback} from 'react-native';
+import {SearchNormal1} from 'iconsax-react-native';
 import { fontType, colors } from '../../theme';
+import {useNavigation} from '@react-navigation/native';
 
 export default function Discover() {
+  const navigation = useNavigation()
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.searchButton}>
+        <TouchableWithoutFeedback style={styles.searchButton} onPress={() => navigation.navigate("Discover")}>
             <SearchNormal1 color={colors.black()} variant="Linear" size={25} />
-        </TouchableOpacity>
+        </TouchableWithoutFeedback>
         <View style={styles.searchbox}></View>
       </View>
       <ListBlog />
-      <View style={styles.footer}>
-          <TouchableOpacity style={styles.searchButton}>
-            <Home color={colors.black()} variant="Bold" size={28} />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.searchButton}>
-            <SearchNormal1 color={colors.black()} variant="Linear" size={28} />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.searchButton}>
-            <Bag color={colors.black()} variant="Bold" size={28} />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.searchButton}>
-            <ProfileCircle color={colors.black()} variant="Bold" size={28} />
-          </TouchableOpacity>
-      </View>
     </View>
   );
 }
 
 const ListBlog = () => {
+  const navigation = useNavigation()
   return (
-    <ScrollView style={{ flex: 1 }}>
+    <ScrollView showsVerticalScrollIndicator={false}>
       <View style={styles.container}>
         <View style={styles.header2}>
           <Text style={styles.title2}>Markie Bakery</Text>
@@ -47,11 +36,11 @@ const ListBlog = () => {
               uri: 'https://i.pinimg.com/564x/73/80/44/7380448d1697cd3cdf3afc5506356084.jpg'
             }}
           />
-          <Text style={styles.text}>
-            Sauge Bread
+          <Text style={styles.text} onPress={() => navigation.navigate("Detail")}>
+            Ontbijtkoek
           </Text>
           <Text style={styles.des}>
-            Rp25.000
+            Rp35.000
           </Text>
         </View>
         <View style={styles.category1}>
@@ -62,10 +51,10 @@ const ListBlog = () => {
             }}
           />
           <Text style={styles.text}>
-            Blueberry Dessert
+            Cookies
           </Text>
           <Text style={styles.des}>
-            Rp33.000
+            Rp23.000
           </Text>
         </View>
       </ScrollView>
@@ -78,7 +67,7 @@ const ListBlog = () => {
             }}
           />
           <Text style={styles.text}>
-            Sauge Bread
+            Mini Blueberry Dessert
           </Text>
           <Text style={styles.des}>
             Rp25.000
@@ -92,10 +81,10 @@ const ListBlog = () => {
             }}
           />
           <Text style={styles.text}>
-            Blueberry Dessert
+            Cat Cookies
           </Text>
           <Text style={styles.des}>
-            Rp33.000
+            Rp14.000
           </Text>
         </View>
       </ScrollView>
@@ -108,10 +97,10 @@ const ListBlog = () => {
             }}
           />
           <Text style={styles.text}>
-            Sauge Bread
+            Croissant
           </Text>
           <Text style={styles.des}>
-            Rp25.000
+            Rp41.000
           </Text>
         </View>
         <View style={styles.category1}>
@@ -122,10 +111,10 @@ const ListBlog = () => {
             }}
           />
           <Text style={styles.text}>
-            Blueberry Dessert
+            Choco Cake
           </Text>
           <Text style={styles.des}>
-            Rp33.000
+            Rp27.000
           </Text>
         </View>
       </ScrollView>
@@ -164,28 +153,28 @@ const ListBlog = () => {
           <Image
             style={styles.imageSec}            
             source={{
-              uri: 'https://i.pinimg.com/564x/7d/07/ae/7d07ae8d5d25660da0eeb9140748f905.jpg'
+              uri: 'https://i.pinimg.com/564x/05/9f/2f/059f2f570464889d15e46b6c7d6545cb.jpg'
             }}
           />
           <Text style={styles.text}>
-            Sauge Bread
+            Cheesecake
           </Text>
           <Text style={styles.des}>
-            Rp25.000
+            Rp29.000
           </Text>
         </View>
         <View style={styles.category1}>
           <Image
             style={styles.imageSec}
             source={{
-              uri: 'https://i.pinimg.com/564x/35/91/47/359147c5df347e99219f2ab7ad229a7d.jpg'
+              uri: 'https://i.pinimg.com/564x/6b/dc/a1/6bdca103c8544e7e926a8193dc631187.jpg'
             }}
           />
           <Text style={styles.text}>
-            Blueberry Dessert
+            Bear Birthday Cake
           </Text>
           <Text style={styles.des}>
-            Rp33.000
+            Rp127.000
           </Text>
         </View>
       </ScrollView>
@@ -254,18 +243,6 @@ const styles = StyleSheet.create({
     paddingTop:8,
     paddingBottom:4,
     backgroundColor: '#EEE0C9',
-  },
-  footer: {
-    paddingHorizontal: 24,
-    justifyContent: 'space-between',
-    flexDirection: 'row',
-    alignItems: 'center',
-    height:48,
-    elevation: 0,
-    paddingTop:4,
-    paddingBottom:8,
-    borderRadius: 0,
-    backgroundColor: '#F1F0E8',
   },
   title: {
     fontSize: 20,
