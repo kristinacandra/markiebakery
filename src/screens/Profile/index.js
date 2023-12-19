@@ -16,9 +16,6 @@ import {
   Notification,
   Star,
   Additem,
-  Receipt21,
-  Clock,
-  Message,
 } from 'iconsax-react-native';
 import {fontType, colors} from '../../theme';
 import {useNavigation, useFocusEffect} from '@react-navigation/native';

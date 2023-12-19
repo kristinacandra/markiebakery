@@ -4,6 +4,8 @@ import {ArrowLeft} from 'iconsax-react-native';
 import {useNavigation} from '@react-navigation/native';
 import {fontType, colors} from '../../theme';
 import axios from 'axios';
+import FastImage from 'react-native-fast-image';
+
 
 const EditBlogForm = ({route}) => {
   const {blogId} = route.params;
@@ -18,48 +20,80 @@ const EditBlogForm = ({route}) => {
     });
   };
   const [image, setImage] = useState(null);
+  const [oldImage, setOldImage] = useState(null);
   const navigation = useNavigation();
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    getBlogById();
+    const subscriber = firestore()
+      .collection('blog')
+      .doc(blogId)
+      .onSnapshot(documentSnapshot => {
+        const blogData = documentSnapshot.data();
+        if (blogData) {
+          console.log('Blog data: ', blogData);
+          setBlogData({
+            title: blogData.title,
+            content: blogData.content,
+            category: {
+              id: blogData.category.id,
+              name: blogData.category.name,
+            },
+          });
+          setOldImage(blogData.image);
+          setImage(blogData.image);
+          setLoading(false);
+        } else {
+          console.log(`Blog with ID ${blogId} not found.`);
+        }
+      });
+    setLoading(false);
+    return () => subscriber();
   }, [blogId]);
 
-  const getBlogById = async () => {
-    try {
-      const response = await axios.get(`https://657f25d29d10ccb465d60ecb.mockapi.io/markiebakery/blog/${blogId}`);
-      setBlogData({
-        title: response.data.title,
-        content: response.data.content,
-        category: {
-          id: response.data.category.id,
-          name: response.data.category.name,
-        },
+
+  const handleImagePick = async () => {
+    ImagePicker.openPicker({
+      width: 1920,
+      height: 1080,
+      cropping: true,
+    })
+      .then(image => {
+        console.log(image);
+        setImage(image.path);
+      })
+      .catch(error => {
+        console.log(error);
       });
-      setImage(response.data.image);
-      setLoading(false);
-    } catch (error) {
-      console.error(error);
-    }
   };
+
   const handleUpdate = async () => {
     setLoading(true);
+    let filename = image.substring(image.lastIndexOf('/') + 1);
+    const extension = filename.split('.').pop();
+    const name = filename.split('.').slice(0, -1).join('.');
+    filename = name + Date.now() + '.' + extension;
+    const reference = storage().ref(`blogimages/${filename}`);
     try {
-      await axios
-        .put(`https://657f25d29d10ccb465d60ecb.mockapi.io/markiebakery/blog/${blogId}`, {
-          title: blogData.title,
-          image,
-          content: blogData.content,
-        })
-        .then(function (response) {
-          console.log(response);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+      if (image !== oldImage && oldImage) {
+        const oldImageRef = storage().refFromURL(oldImage);
+        await oldImageRef.delete();
+      }
+      if (image !== oldImage) {
+        await reference.putFile(image);
+      }
+      const url =
+        image !== oldImage ? await reference.getDownloadURL() : oldImage;
+      await firestore().collection('blog').doc(blogId).update({
+        title: blogData.title,
+        category: blogData.category,
+        image: url,
+        content: blogData.content,
+      });
       setLoading(false);
-      navigation.navigate('Profile');
-    } catch (e) {
-      console.log(e);
+      console.log('Blog Updated!');
+      navigation.navigate('BlogDetail', {blogId});
+    } catch (error) {
+      console.log(error);
     }
   };
 

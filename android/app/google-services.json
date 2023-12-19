@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "817391340767",
+    "project_id": "markiebakery-1609a",
+    "storage_bucket": "markiebakery-1609a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:817391340767:android:b93323b50baedb6dd42d6a",
+        "android_client_info": {
+          "package_name": "com.markiebakery"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNZlJJbLbQuqFQZ2KLLoviHp3sZiPP-MQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
