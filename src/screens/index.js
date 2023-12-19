@@ -5,4 +5,6 @@ import detail from "./detail"
 import AddBlogForm from "./AddBlogForm";
 import Search from "./Search";
 import EditBlogForm from "./EditBlogForm";
-export {Home, Discover, Profile, detail, AddBlogForm, Search, EditBlogForm}
+import Login from "./Login";
+import Register from "./Register";
+export {Home, Discover, Profile, detail, AddBlogForm, Search, EditBlogForm, Login, Register}

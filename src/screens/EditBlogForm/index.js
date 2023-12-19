@@ -33,7 +33,7 @@ const EditBlogForm = ({route}) => {
   const [image, setImage] = useState(null);
   const [oldImage, setOldImage] = useState(null);
   const navigation = useNavigation();
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     const subscriber = firestore()
       .collection('blog')
@@ -116,12 +116,12 @@ const EditBlogForm = ({route}) => {
         .then(() => {
           console.log('Menu deleted!');
         });
-  
+
       if (oldImage) {
         const imageRef = storage().refFromURL(oldImage);
         await imageRef.delete();
       }
-  
+
       console.log('Menu deleted!');
       setLoading(false);
       navigation.navigate('Profile');
@@ -129,7 +129,6 @@ const EditBlogForm = ({route}) => {
       console.error(error);
     }
   };
-  
 
   return (
     <View style={styles.container}>

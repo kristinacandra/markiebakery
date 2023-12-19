@@ -1,17 +1,26 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator} from "react-native";
-import { ArrowLeft, AddSquare, Add } from "iconsax-react-native";
-import { useNavigation } from "@react-navigation/native";
-import { fontType, colors } from "../../theme";
+import React, {useState} from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+  ActivityIndicator,
+} from 'react-native';
+import {ArrowLeft, AddSquare, Add} from 'iconsax-react-native';
+import {useNavigation} from '@react-navigation/native';
+import {fontType, colors} from '../../theme';
 import FastImage from 'react-native-fast-image';
 import ImagePicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 
 const AddBlogForm = () => {
   const [blogData, setBlogData] = useState({
-    title: "",
-    content: "",
+    title: '',
+    content: '',
   });
   const handleChange = (key, value) => {
     setBlogData({
@@ -44,11 +53,12 @@ const AddBlogForm = () => {
     const reference = storage().ref(`blogimages/${filename}`);
 
     setLoading(true);
+
     try {
       await reference.putFile(image);
       const url = await reference.getDownloadURL();
       await firestore().collection('blog').add({
-        title: blogData.title,        
+        title: blogData.title,
         content: blogData.content,
         image: url,
       });
@@ -65,7 +75,7 @@ const AddBlogForm = () => {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <ArrowLeft color={colors.black()} variant="Linear" size={24} />
         </TouchableOpacity>
-        <View style={{ flex: 1, alignItems: "center" }}>
+        <View style={{flex: 1, alignItems: 'center'}}>
           <Text style={styles.title}>Add Menu</Text>
         </View>
       </View>
@@ -74,23 +84,22 @@ const AddBlogForm = () => {
           paddingHorizontal: 24,
           paddingVertical: 10,
           gap: 10,
-        }}
-      >
+        }}>
         <View style={textInput.borderDashed}>
           <TextInput
             placeholder="Title"
             value={blogData.title}
-            onChangeText={(text) => handleChange("title", text)}
+            onChangeText={text => handleChange('title', text)}
             placeholderTextColor={colors.grey(0.6)}
             multiline
             style={textInput.title}
           />
         </View>
-        <View style={[textInput.borderDashed, { minHeight: 250 }]}>
+        <View style={[textInput.borderDashed, {minHeight: 250}]}>
           <TextInput
             placeholder="Description"
             value={blogData.content}
-            onChangeText={(text) => handleChange("content", text)}
+            onChangeText={text => handleChange('content', text)}
             placeholderTextColor={colors.grey(0.6)}
             multiline
             style={textInput.content}
@@ -150,11 +159,10 @@ const AddBlogForm = () => {
         )}
       </ScrollView>
       <View style={styles.bottomBar}>
-      <TouchableOpacity style={styles.button} onPress={handleUpload}>
+        <TouchableOpacity style={styles.button} onPress={handleUpload}>
           <Text style={styles.buttonLabel}>Upload</Text>
         </TouchableOpacity>
       </View>
-
     </View>
   );
 };
@@ -168,37 +176,36 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: 24,
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     height: 52,
     elevation: 8,
     paddingTop: 8,
     paddingBottom: 4,
   },
   title: {
-    fontFamily: fontType["Pjs-Bold"],
+    fontFamily: fontType['Pjs-Bold'],
     fontSize: 16,
     color: colors.black(),
   },
   bottomBar: {
     backgroundColor: '#EEE0C9',
-    alignItems: "center",
+    alignItems: 'center',
     paddingHorizontal: 24,
     paddingVertical: 10,
-
   },
   button: {
     paddingHorizontal: 20,
     paddingVertical: 10,
     backgroundColor: 'brown',
     borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    width:'100%'
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
   },
   buttonLabel: {
     fontSize: 14,
-    fontFamily: fontType["Pjs-SemiBold"],
+    fontFamily: fontType['Pjs-SemiBold'],
     color: colors.white(),
   },
 });
@@ -211,13 +218,13 @@ const textInput = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    fontFamily: fontType["Pjs-SemiBold"],
+    fontFamily: fontType['Pjs-SemiBold'],
     color: colors.black(),
     padding: 0,
   },
   content: {
     fontSize: 16,
-    fontFamily: fontType["Pjs-Regular"],
+    fontFamily: fontType['Pjs-Regular'],
     color: colors.black(),
     padding: 0,
   },
@@ -225,12 +232,12 @@ const textInput = StyleSheet.create({
 const category = StyleSheet.create({
   title: {
     fontSize: 12,
-    fontFamily: fontType["Pjs-Regular"],
+    fontFamily: fontType['Pjs-Regular'],
     color: colors.grey(0.6),
   },
   container: {
-    flexWrap: "wrap",
-    flexDirection: "row",
+    flexWrap: 'wrap',
+    flexDirection: 'row',
     gap: 10,
     marginTop: 10,
   },
@@ -241,6 +248,6 @@ const category = StyleSheet.create({
   },
   name: {
     fontSize: 10,
-    fontFamily: fontType["Pjs-Medium"],
+    fontFamily: fontType['Pjs-Medium'],
   },
 });

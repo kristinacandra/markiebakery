@@ -2,7 +2,7 @@ import * as React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
 import {Home2, ProfileCircle, SearchNormal1} from 'iconsax-react-native';
-import {Home, Discover, Profile, detail, AddBlogForm, EditBlogForm} from '../../screens';
+import {Home, Discover, Profile, detail, AddBlogForm, EditBlogForm, Register, Login} from '../../screens';
 import {colors} from '../../theme';
 import SearchBar from '../SearchBar';
 
@@ -77,7 +77,7 @@ function MainApp() {
 }
 const Router = () => {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator initialRouteName="Login">
       <Stack.Screen
         name="MainApp"
         component={MainApp}
@@ -126,6 +126,16 @@ const Router = () => {
           gestureDirection: 'horizontal',
           ...TransitionPresets.SlideFromRightIOS,
         }}
+      />
+      <Stack.Screen
+        name="Register"
+        component={Register}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Login"
+        component={Login}
+        options={{headerShown: false}}
       />
     </Stack.Navigator>
   );
