@@ -1,32 +1,17 @@
-import React, {useState} from 'react';
-import {View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator, KeyboardAvoidingView} from 'react-native';
+import React, { useState } from "react";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator} from "react-native";
+import { ArrowLeft, AddSquare, Add } from "iconsax-react-native";
+import { useNavigation } from "@react-navigation/native";
+import { fontType, colors } from "../../theme";
 import FastImage from 'react-native-fast-image';
-import {ArrowLeft, AddSquare, Add} from 'iconsax-react-native';
-import {useNavigation} from '@react-navigation/native';
-import {fontType, colors} from '../../theme';
 import ImagePicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
-import auth from '@react-native-firebase/auth';
 
 const AddBlogForm = () => {
-  const [loading, setLoading] = useState(false);
-  const dataCategory = [
-    { id: 1, name: "Food" },
-    { id: 2, name: "Sports" },
-    { id: 3, name: "Technology" },
-    { id: 4, name: "Fashion" },
-    { id: 5, name: "Health" },
-    { id: 6, name: "Lifestyle" },
-    { id: 7, name: "Music" },
-    { id: 8, name: "Car" },
-  ];
   const [blogData, setBlogData] = useState({
     title: "",
     content: "",
-    category: {},
-    totalLikes: 0,
-    totalComments: 0,
   });
   const handleChange = (key, value) => {
     setBlogData({
@@ -36,37 +21,11 @@ const AddBlogForm = () => {
   };
   const [image, setImage] = useState(null);
   const navigation = useNavigation();
-  const handleUpload = async () => {
-    let filename = image.substring(image.lastIndexOf('/') + 1);
-    const extension = filename.split('.').pop();
-    const name = filename.split('.').slice(0, -1).join('.');
-    filename = name + Date.now() + '.' + extension;
-    const reference = storage().ref(`blogimages/${filename}`);
-
-    setLoading(true);
-    const authorId = auth().currentUser.uid;
-    try {
-      await firestore().collection('blog').add({
-        title: blogData.title,
-        category: blogData.category,
-        image: url,
-        content: blogData.content,
-        totalComments: blogData.totalComments,
-        totalLikes: blogData.totalLikes,
-        createdAt: new Date(),
-        authorId
-      });
-      setLoading(false);
-      console.log('Blog added!');
-      navigation.navigate('Profile');
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const [loading, setLoading] = useState(true);
   const handleImagePick = async () => {
     ImagePicker.openPicker({
-      width: 1920,
-      height: 1080,
+      width: 1050,
+      height: 1050,
       cropping: true,
     })
       .then(image => {
@@ -77,18 +36,37 @@ const AddBlogForm = () => {
         console.log(error);
       });
   };
+  const handleUpload = async () => {
+    let filename = image.substring(image.lastIndexOf('/') + 1);
+    const extension = filename.split('.').pop();
+    const name = filename.split('.').slice(0, -1).join('.');
+    filename = name + Date.now() + '.' + extension;
+    const reference = storage().ref(`blogimages/${filename}`);
+
+    setLoading(true);
+    try {
+      await reference.putFile(image);
+      const url = await reference.getDownloadURL();
+      await firestore().collection('blog').add({
+        title: blogData.title,        
+        content: blogData.content,
+        image: url,
+      });
+      setLoading(false);
+      console.log('New Menu added!');
+      navigation.navigate('Profile');
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
-    <KeyboardAvoidingView
-      style={{flex: 1}}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      enabled>
     <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <ArrowLeft color={colors.black()} variant="Linear" size={24} />
         </TouchableOpacity>
-        <View style={{flex: 1, alignItems: 'center'}}>
-          <Text style={styles.title}>Write blog</Text>
+        <View style={{ flex: 1, alignItems: "center" }}>
+          <Text style={styles.title}>Add Menu</Text>
         </View>
       </View>
       <ScrollView
@@ -96,53 +74,27 @@ const AddBlogForm = () => {
           paddingHorizontal: 24,
           paddingVertical: 10,
           gap: 10,
-        }}>
+        }}
+      >
         <View style={textInput.borderDashed}>
           <TextInput
             placeholder="Title"
             value={blogData.title}
-            onChangeText={text => handleChange('title', text)}
+            onChangeText={(text) => handleChange("title", text)}
             placeholderTextColor={colors.grey(0.6)}
             multiline
             style={textInput.title}
           />
         </View>
-        <View style={[textInput.borderDashed, {minHeight: 250}]}>
+        <View style={[textInput.borderDashed, { minHeight: 250 }]}>
           <TextInput
-            placeholder="Content"
+            placeholder="Description"
             value={blogData.content}
-            onChangeText={text => handleChange('content', text)}
+            onChangeText={(text) => handleChange("content", text)}
             placeholderTextColor={colors.grey(0.6)}
             multiline
             style={textInput.content}
           />
-        </View>
-        <View style={[textInput.borderDashed]}>
-          <Text style={category.title}>Category</Text>
-          <View style={category.container}>
-            {dataCategory.map((item, index) => {
-              const bgColor =
-                item.id === blogData.category.id
-                  ? colors.black()
-                  : colors.grey(0.08);
-              const color =
-                item.id === blogData.category.id
-                  ? colors.white()
-                  : colors.grey();
-              return (
-                <TouchableOpacity
-                  key={index}
-                  onPress={() =>
-                    handleChange('category', {id: item.id, name: item.name})
-                  }
-                  style={[category.item, {backgroundColor: bgColor}]}>
-                  <Text style={[category.name, {color: color}]}>
-                    {item.name}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
         </View>
         {image ? (
           <View style={{position: 'relative'}}>
@@ -160,7 +112,7 @@ const AddBlogForm = () => {
                 position: 'absolute',
                 top: -5,
                 right: -5,
-                backgroundColor: colors.blue(),
+                backgroundColor: colors.brown(),
                 borderRadius: 25,
               }}
               onPress={() => setImage(null)}>
@@ -191,43 +143,28 @@ const AddBlogForm = () => {
                   fontSize: 12,
                   color: colors.grey(0.6),
                 }}>
-                Upload Thumbnail
+                Add Photo
               </Text>
             </View>
           </TouchableOpacity>
         )}
       </ScrollView>
       <View style={styles.bottomBar}>
-        <TouchableOpacity style={styles.button} onPress={handleUpload}>
+      <TouchableOpacity style={styles.button} onPress={handleUpload}>
           <Text style={styles.buttonLabel}>Upload</Text>
         </TouchableOpacity>
       </View>
-      {loading && (
-        <View style={styles.loadingOverlay}>
-          <ActivityIndicator size="large" color={colors.blue()} />
-        </View>
-      )}
+
     </View>
-    </KeyboardAvoidingView>
   );
 };
 
 export default AddBlogForm;
 
 const styles = StyleSheet.create({
-  loadingOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: colors.black(0.4),
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   container: {
     flex: 1,
-    backgroundColor: colors.white(),
+    backgroundColor: '#EEE0C9',
   },
   header: {
     paddingHorizontal: 24,
@@ -244,26 +181,20 @@ const styles = StyleSheet.create({
     color: colors.black(),
   },
   bottomBar: {
-    backgroundColor: colors.white(),
-    alignItems: "flex-end",
+    backgroundColor: '#EEE0C9',
+    alignItems: "center",
     paddingHorizontal: 24,
     paddingVertical: 10,
-    shadowColor: colors.black(),
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+
   },
   button: {
     paddingHorizontal: 20,
     paddingVertical: 10,
-    backgroundColor: colors.blue(),
-    borderRadius: 20,
+    backgroundColor: 'brown',
+    borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",
+    width:'100%'
   },
   buttonLabel: {
     fontSize: 14,
@@ -273,11 +204,10 @@ const styles = StyleSheet.create({
 });
 const textInput = StyleSheet.create({
   borderDashed: {
-    borderStyle: "dashed",
     borderWidth: 1,
     borderRadius: 5,
     padding: 10,
-    borderColor: colors.grey(0.4),
+    borderColor: 'grey',
   },
   title: {
     fontSize: 16,
@@ -286,7 +216,7 @@ const textInput = StyleSheet.create({
     padding: 0,
   },
   content: {
-    fontSize: 12,
+    fontSize: 16,
     fontFamily: fontType["Pjs-Regular"],
     color: colors.black(),
     padding: 0,
@@ -311,6 +241,6 @@ const category = StyleSheet.create({
   },
   name: {
     fontSize: 10,
-    fontFamily: fontType["Pjs-Medium"],  
+    fontFamily: fontType["Pjs-Medium"],
   },
 });

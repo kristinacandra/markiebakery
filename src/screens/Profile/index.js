@@ -6,7 +6,7 @@ import {
   View,
   Image,
   TouchableOpacity,
-  ActivityIndicator,
+  ActivityIndicator, RefreshControl
 } from 'react-native';
 import {
   Receipt1,
@@ -20,8 +20,7 @@ import {
 import {fontType, colors} from '../../theme';
 import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import FastImage from 'react-native-fast-image';
-
-import axios from 'axios';
+import firestore from '@react-native-firebase/firestore';
 
 export default function Profile() {
   return (
@@ -39,33 +38,47 @@ const ListBlog = () => {
   const [loading, setLoading] = useState(true);
   const [blogData, setBlogData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
-  const getDataBlog = async () => {
-    try {
-      const response = await axios.get(
-        'https://657f25d29d10ccb465d60ecb.mockapi.io/markiebakery/blog',
-      );
-      setBlogData(response.data);
-      setLoading(false);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  useEffect(() => {
+    const subscriber = firestore()
+      .collection('blog')
+      .onSnapshot(querySnapshot => {
+        const blogs = [];
+        querySnapshot.forEach(documentSnapshot => {
+          blogs.push({
+            ...documentSnapshot.data(),
+            id: documentSnapshot.id,
+          });
+        });
+        setBlogData(blogs);
+        setLoading(false);
+      });
+    return () => subscriber();
+  }, []);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     setTimeout(() => {
-      getDataBlog();
+      firestore()
+        .collection('blog')
+        .onSnapshot(querySnapshot => {
+          const blogs = [];
+          querySnapshot.forEach(documentSnapshot => {
+            blogs.push({
+              ...documentSnapshot.data(),
+              id: documentSnapshot.id,
+            });
+          });
+          setBlogData(blogs);
+        });
       setRefreshing(false);
     }, 1500);
   }, []);
-
-  useFocusEffect(
-    useCallback(() => {
-      getDataBlog();
-    }, []),
-  );
   return (
-    <ScrollView>
+    <ScrollView
+    showsVerticalScrollIndicator={false}
+    refreshControl={
+      <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+    }>      
       <View style={styles.container}>
         <View style={styles.konten}>
           <View style={styles.profil}>
@@ -191,7 +204,6 @@ const ItemSmall = ({item}) => {
             gap: 30,
           }}>
           <View style={{gap: 5, flex: 1}}>
-            <Text style={styles.cardCategory}>{item.category?.name}</Text>
             <Text style={styles.cardTitle}>{item?.title}</Text>
           </View>
         </View>
